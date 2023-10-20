@@ -1,0 +1,28 @@
+project: cosmic_sole
+provider: local
+registry:
+    registry_store_type: PostgreSQLRegistryStore
+    path: feast_registry
+    host: localhost
+    port: 5432
+    database: feast_data
+    db_schema: public
+    user: daksh
+    password: '0762'
+online_store:
+    type: postgres
+    host: localhost
+    port: 5432
+    database: feast_data
+    db_schema: public
+    user: daksh
+    password: '0762'
+offline_store:
+    type: postgres
+    host: localhost
+    port: 5432
+    database: feast_data
+    db_schema: public
+    user: daksh
+    password: '0762'
+entity_key_serialization_version: 2
