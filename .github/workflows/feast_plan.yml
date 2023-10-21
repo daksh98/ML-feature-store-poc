@@ -10,13 +10,13 @@ jobs:
         id: setup-python
         uses: actions/setup-python@v3
         with:
-          python-version: "3.7"
+          python-version: "3.8"
           architecture: x64
           
       # Run `feast plan`
       - uses: actions/checkout@v3
       - name: Install feast
-        run: pip install "feast[postgres]"
+        run: pip3 install "feast[postgres]"
       - name: Capture `feast plan` in a variable
         id: feast_plan
         env:
