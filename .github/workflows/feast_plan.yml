@@ -16,7 +16,7 @@ jobs:
       # Run `feast plan`
       - uses: actions/checkout@v3
       - name: Install feast
-        run: pip install "feast[aws]"
+        run: pip install "feast[postgres]"
       - name: Capture `feast plan` in a variable
         id: feast_plan
         env:
