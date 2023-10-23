@@ -23,7 +23,7 @@ customer_activity_v1 = FeatureService(
               "owner_team": "CGRM",
               "model": "Identity Crime Model",
               "model_run_id": "1623891892",
-              "production": "False"
+              "environment" : "staging"
             }
 )
 
@@ -38,7 +38,7 @@ customer_activity_v2 = FeatureService(
               "owner_team": "CGRM",
               "model": "Incorrect Reporting Model",
               "model_run_id": "12639129123",
-              "production": "False"
+              "environment" : "staging"
             }
 )
 
@@ -56,7 +56,7 @@ customer_activity_v4 = FeatureService(
               "owner_team": "CGRM",
               "model": "Identity Crime Model",
               "model_run_id": "1623891892",
-              "production": "True"
+              "environment" : "staging"
             }
 )
 
@@ -68,6 +68,6 @@ driver_activity_v3 = FeatureService(
               "owner_team": "CGRM",
               "model": "Incorrect Reporting Model",
               "model_run_id": "1623891892",
-              "production": "True"
+              "environment" : "production"
             }
 )

@@ -27,6 +27,6 @@ customer_data_source = PostgreSQLSource(
     tags = {
               "owner": "dakshmukhra1@gmail.com",
               "owner_team": "CGRM",
-              "production": "True"
+              "environment" : "production"
             }
 )
