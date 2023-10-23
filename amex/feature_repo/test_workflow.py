@@ -36,6 +36,8 @@ def run_demo():
     print("=====fetch train population + on demand ========")
     # feature_service 4 is for testing null conversions
     features_to_fetch = store.get_feature_service("customer_activity_v4")
+    print(f"feature service owner ----> {features_to_fetch.owner} \ndescription ----> {features_to_fetch.description} \n")
+    print()
     training_job = store.get_historical_features(
         entity_df=f"""
         select

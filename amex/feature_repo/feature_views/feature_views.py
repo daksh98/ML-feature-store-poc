@@ -5,26 +5,22 @@ from datetime import timedelta
 import pandas as pd
 
 from feast import Entity, FeatureService, FeatureView, Field, PushSource, RequestSource
+
 from feast.infra.offline_stores.contrib.postgres_offline_store.postgres_source import (
     PostgreSQLSource,
 )
+
 from feast.on_demand_feature_view import on_demand_feature_view
 from feast.types import Float32, Float64, Int64 , String
 
-# Define an entity for the driver. You can think of an entity as a primary key used to
-# fetch features.
-customer = Entity(name="customer",join_keys=["customer_id"])
 
-customer_data_source = PostgreSQLSource(
-    name="customer_data_source",
-    query="SELECT * FROM amex_features",
-    timestamp_field="s_2"
-)
+from data_sources.data_sources import *
+from entities.entities import *
 
 # Our parquet files contain sample data that includes a driver_id column, timestamps and
 # three feature column. Here we define a Feature View that will allow us to serve this
 # data to our model online.
-customer_stats_fv = FeatureView(
+customer_features = FeatureView(
     # The unique name of this feature view. Two feature views in a single
     # project cannot have the same name
     name="customer_features",
@@ -51,7 +47,12 @@ customer_stats_fv = FeatureView(
     source=customer_data_source,
     # Tags are user defined key/value pairs that are attached to each
     # feature view
-    tags={"teams_tag": "customer_rating"},
+    tags = {
+              "owner": "dakshmukhra1@gmail.com",
+              "owner_team": "CGRM",
+              "category": "customer_stats",
+              "production" : "True"
+            },
 )
 
 # Define a request data source which encodes features / information only
@@ -67,35 +68,19 @@ input_request = RequestSource(
 # Define an on demand feature view which can generate new features based on
 # existing feature views and RequestSource features
 @on_demand_feature_view(
-    sources=[customer_stats_fv, input_request],
+    sources=[customer_features, input_request],
     schema=[
         Field(name="b_10_plus_val1", dtype=Float64),
         Field(name="b_10_plus_val2", dtype=Float64),
     ],
 )
-def transformed_B10(inputs: pd.DataFrame) -> pd.DataFrame:
+def customer_features_transformed_B10(inputs: pd.DataFrame) -> pd.DataFrame:
     df = pd.DataFrame()
     df["b_10_plus_val1"] = inputs["b_10"] + inputs["val_to_add"]
     df["b_10_plus_val2"] = inputs["b_10"] + inputs["val_to_add_2"]
     return df
 
 
-# This groups features into a model version
-# can select featrues from different feature views
-customer_activity_v1 = FeatureService(
-    name="customer_activity_v1",
-    features=[
-        customer_stats_fv,  # Can also Sub-selects a feature from a feature view
-    ]
-)
-
-customer_activity_v2 = FeatureService(
-    name="customer_activity_v2",
-    features=[
-        customer_stats_fv,  # Can also Sub-selects a feature from a feature view
-        transformed_B10,  # Selects all features from the feature view
-    ]
-)
 # Define a request data source which encodes features / information only
 # available at request time (e.g. part of the user initiated HTTP request)
 input_request_2 = RequestSource(
@@ -108,24 +93,16 @@ input_request_2 = RequestSource(
 # Define an on demand feature view which can generate new features based on
 # existing feature views and RequestSource features
 @on_demand_feature_view(
-    sources=[customer_stats_fv, input_request_2],
+    sources=[customer_features, input_request_2],
     schema=[
         Field(name="s_6_to_n", dtype=Float64),
     ],
 )
-def transformed_s_6(inputs: pd.DataFrame) -> pd.DataFrame:
+def customer_features_transformed_s_6(inputs: pd.DataFrame) -> pd.DataFrame:
     df = pd.DataFrame()
 
     df['s_6_to_n'] = inputs['s_6'].fillna('N')
     return df
-
-customer_activity_v4 = FeatureService(
-    name="customer_activity_v4",
-    features=[
-        customer_stats_fv,
-        transformed_s_6,  # Can also Sub-selects a feature from a feature view
-    ]
-)
 
 
 # Defines a way to push data (to be available offline, online or both) into Feast.
@@ -137,8 +114,8 @@ customer_stats_push_source = PushSource(
 # Defines a slightly modified version of the feature view from above, where the source
 # has been changed to the push source. This allows fresh features to be directly pushed
 # to the online store for this feature view.
-customer_stats_fresh_fv = FeatureView(
-    name="customer_stats_fresh",
+customer_features_fresh = FeatureView(
+    name="customer_features_fresh",
     entities=[customer],
     ttl=timedelta(weeks=10),
     schema=[
@@ -156,27 +133,26 @@ customer_stats_fresh_fv = FeatureView(
     ],
     online=True,
     source=customer_stats_push_source,
-    tags={"teams_tag": "customer_rating"},
+    tags = {
+              "owner": "dakshmukhra1@gmail.com",
+              "owner_team": "CGRM",
+              "category": "customer_stats",
+              "production" : "False"
+            },
 )
 
 
 # Define an on demand feature view which can generate new features based on
 # existing feature views and RequestSource features
 @on_demand_feature_view(
-    sources=[customer_stats_fresh_fv, input_request],  # relies on fresh version of FV
+    sources=[customer_features_fresh, input_request],  # relies on fresh version of FV
     schema=[
         Field(name="b_10_plus_val1", dtype=Float64),
         Field(name="b_10_plus_val2", dtype=Float64),
     ],
 )
-def transformed_B10_fresh(inputs: pd.DataFrame) -> pd.DataFrame:
+def customer_features_transformed_B10_fresh(inputs: pd.DataFrame) -> pd.DataFrame:
     df = pd.DataFrame()
     df["b_10_plus_val1"] = inputs["b_10"] + inputs["val_to_add"]
     df["b_10_plus_val2"] = inputs["b_10"] + inputs["val_to_add_2"]
     return df
-
-
-driver_activity_v3 = FeatureService(
-    name="customer_activity_v3",
-    features=[customer_stats_fresh_fv, transformed_B10_fresh]
-)
