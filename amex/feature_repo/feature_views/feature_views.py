@@ -51,7 +51,7 @@ customer_features = FeatureView(
               "owner": "dakshmukhra1@gmail.com",
               "owner_team": "CGRM",
               "category": "customer_stats",
-              "production" : "True"
+              "environment" : "development"
             },
 )
 
@@ -137,7 +137,7 @@ customer_features_fresh = FeatureView(
               "owner": "dakshmukhra1@gmail.com",
               "owner_team": "CGRM",
               "category": "customer_stats",
-              "production" : "False"
+              "environment" : "development"
             },
 )
 

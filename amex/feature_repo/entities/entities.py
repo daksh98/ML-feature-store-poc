@@ -21,6 +21,6 @@ customer = Entity( # can also defin type of join key
                       "owner_team": "CGRM",
                       "model": "Identity Crime Model",
                       "model_run_id": "1623891892",
-                      "production": "True"
+                      "environment" : "development"
                     }
         )
