@@ -2,7 +2,7 @@ project: amex
 provider: local
 registry:
     registry_store_type: PostgreSQLRegistryStore
-    path: feast_registry
+    path: feast_registry_prod
     host: localhost
     port: 5432
     database: feast_data
