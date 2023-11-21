@@ -8,7 +8,7 @@ registry:
     database: feast_data
     db_schema: public
     user: daksh
-    password: "0762"
+    password:
 online_store:
     type: postgres
     host: localhost
@@ -16,7 +16,7 @@ online_store:
     database: feast_data
     db_schema: public
     user: daksh
-    password: "0762"
+    password: 
 offline_store:
     type: postgres
     host: localhost
@@ -24,7 +24,7 @@ offline_store:
     database: feast_data
     db_schema: public
     user: daksh
-    password: "0762"
+    password: 
 feature_server:
     enabled: True
     feature_logging:
